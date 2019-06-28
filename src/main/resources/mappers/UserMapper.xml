@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyq.firstdemo.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.wyq.firstdemo.entity.UserEntity">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="age" jdbcType="INTEGER" property="age" />
+        <result column="birth_day" jdbcType="DATE" property="birthDay" />
+        <result column="is_married" jdbcType="BIT" property="isMarried" />
+        <result column="salary" jdbcType="DECIMAL" property="salary" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, name, age, birth_day, is_married, salary
+    </sql>
+
+    <insert id="insert" parameterType="com.wyq.firstdemo.entity.UserEntity">
+        insert into user (name, age, birth_day, is_married, salary, insert_time, update_time)
+        values
+        (#{name}, #{age}, #{birthDay}, #{isMarried}, #{salary}, now(), now())
+    </insert>
+
+    <insert id="insertList">
+        insert into user (name, age, birth_day, is_married, salary, insert_time, update_time)
+        values
+        <foreach collection="userEntityList" item="userEntity" separator=",">
+            (#{userEntity.name}, #{userEntity.age}, #{userEntity.birthDay}, #{userEntity.isMarried}, #{userEntity.salary}, now(), now())
+        </foreach>
+    </insert>
+
+    <delete id="deleteById" parameterType="int">
+        delete from user
+        where
+        id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.wyq.firstdemo.entity.UserEntity">
+        update user
+        set name = #{name}, age = #{age}, birth_day = #{birthDay}, is_married = #{isMarried}, salary = #{salary}
+        where id = #{id}
+    </update>
+
+    <select id="queryById" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from user
+        where
+        id = #{id}
+    </select>
+
+    <select id="queryAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from user
+    </select>
+</mapper>
+
