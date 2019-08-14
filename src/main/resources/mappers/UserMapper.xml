@@ -7,7 +7,7 @@
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="age" jdbcType="INTEGER" property="age" />
         <result column="birth_day" jdbcType="DATE" property="birthDay" />
-        <result column="is_married" jdbcType="BIT" property="isMarried" />
+        <result column="is_married" jdbcType="BIT" property="married" />
         <result column="salary" jdbcType="DECIMAL" property="salary" />
     </resultMap>
     <sql id="Base_Column_List">
@@ -17,14 +17,14 @@
     <insert id="insert" parameterType="com.wyq.firstdemo.entity.UserEntity">
         insert into user (name, age, birth_day, is_married, salary, insert_time, update_time)
         values
-        (#{name}, #{age}, #{birthDay}, #{isMarried}, #{salary}, now(), now())
+        (#{name}, #{age}, #{birthDay}, #{married}, #{salary}, now(), now())
     </insert>
 
     <insert id="insertList">
         insert into user (name, age, birth_day, is_married, salary, insert_time, update_time)
         values
         <foreach collection="userEntityList" item="userEntity" separator=",">
-            (#{userEntity.name}, #{userEntity.age}, #{userEntity.birthDay}, #{userEntity.isMarried}, #{userEntity.salary}, now(), now())
+            (#{userEntity.name}, #{userEntity.age}, #{userEntity.birthDay}, #{userEntity.married}, #{userEntity.salary}, now(), now())
         </foreach>
     </insert>
 
@@ -36,7 +36,7 @@
 
     <update id="update" parameterType="com.wyq.firstdemo.entity.UserEntity">
         update user
-        set name = #{name}, age = #{age}, birth_day = #{birthDay}, is_married = #{isMarried}, salary = #{salary}
+        set name = #{name}, age = #{age}, birth_day = #{birthDay}, is_married = #{married}, salary = #{salary}
         where id = #{id}
     </update>
 

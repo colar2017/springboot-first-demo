@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 
 /**
  * @ClassName DruidConfig
@@ -48,6 +47,4 @@ public class DruidConfig {
         DruidDataSource dataSource = new DruidDataSource();
         return dataSource;
     }
-
-
 }

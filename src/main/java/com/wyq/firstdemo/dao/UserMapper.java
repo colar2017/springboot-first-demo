@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+// @Repository这个注解写不写无所谓，不写的话在idea的service中自动注入编译器会报错，但是不影响运行
 @Repository
 public interface UserMapper {
 

@@ -28,11 +28,11 @@ public class UserMapperTest {
     @Test
     public void testInsert() {
         UserEntity userEntity = new UserEntity();
-        userEntity.setName("韦炎强");
+        userEntity.setName("wyq");
         userEntity.setAge(28);
         userEntity.setBirthDay(DateUtil.strToDateTime("1992-12-28 14:00:00"));
         userEntity.setMarried(true);
-        userEntity.setSalary(180000);
+        userEntity.setSalary(200000);
 
         userMapper.insert(userEntity);
     }

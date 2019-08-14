@@ -1,7 +1,9 @@
 package com.wyq.firstdemo.service;
 
 import com.wyq.firstdemo.entity.UserEntity;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -21,4 +23,7 @@ public interface UserService {
 
     List<UserEntity> queryAll();
 
+    void exportUsers(HttpServletResponse response);
+
+    void importUsers(MultipartFile file);
 }

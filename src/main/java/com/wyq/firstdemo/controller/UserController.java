@@ -3,10 +3,17 @@ package com.wyq.firstdemo.controller;
 import com.wyq.firstdemo.common.ServerResponse;
 import com.wyq.firstdemo.entity.UserEntity;
 import com.wyq.firstdemo.service.UserService;
+import com.wyq.firstdemo.util.ListWrapper;
+import com.wyq.firstdemo.util.ValidList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -25,26 +32,48 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/insert")
-    public ServerResponse<String> insert(@RequestBody UserEntity userEntity) {
-        try {
-            userService.insert(userEntity);
-        } catch (Exception e) {
-            log.error("insert user fail!", e);
-            return ServerResponse.createByErrorMessage("insert user fail!");
+    public ServerResponse<String> insert(@Valid @RequestBody UserEntity userEntity, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            log.error(bindingResult.getFieldError().toString());
+            return ServerResponse.createByErrorMessage(bindingResult.getFieldError().getDefaultMessage());
         }
+        userService.insert(userEntity);
         return ServerResponse.createBySuccess();
     }
 
-    @PostMapping("/insert/all")
-    public ServerResponse<String> insertList(@RequestBody List<UserEntity> userEntityList) {
-        try {
-            userService.insertList(userEntityList);
-        } catch (Exception e) {
-            log.error("insert user fail!", e);
-            return ServerResponse.createByErrorMessage("insert user fail!");
+
+    // 使用包装类对list进行验证
+/*    @PostMapping("/insert/all")
+    public ServerResponse<String> insertList(@Valid @RequestBody ListWrapper<UserEntity> listWrapper, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            log.error(bindingResult.getFieldError().toString());
+            return ServerResponse.createByErrorMessage(bindingResult.getFieldError().getDefaultMessage());
         }
+
+        userService.insertList(listWrapper.getList());
+        return ServerResponse.createBySuccess();
+    }*/
+
+
+    // 在类上使用@Validated注解，并配合@Valid注解，对list进行验证
+/*    @PostMapping("/insert/all")
+    public ServerResponse<String> insertList(@Valid @RequestBody List<UserEntity> userEntityList) {
+        userService.insertList(userEntityList);
+        return ServerResponse.createBySuccess();
+    }*/
+
+    // 使用自定义的list，实现list校验
+    @PostMapping("/insert/all")
+    public ServerResponse<String> insertList(@Valid @RequestBody ValidList<UserEntity> userEntities, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            log.error(bindingResult.getFieldError().toString());
+            return ServerResponse.createByErrorMessage(bindingResult.getFieldError().getDefaultMessage());
+        }
+
+        userService.insertList(userEntities);
         return ServerResponse.createBySuccess();
     }
+
 
     @DeleteMapping("/delete/{id}")
     public ServerResponse<String> delete(@PathVariable("id") String strId) {
@@ -74,7 +103,7 @@ public class UserController {
 
     @GetMapping("/list/{id}")
     public ServerResponse<UserEntity> query(@PathVariable("id") String strId) {
-        UserEntity userEntity = null;
+        UserEntity userEntity;
         try {
             int id = Integer.parseInt(strId);
             userEntity = userService.queryById(id);
@@ -90,7 +119,7 @@ public class UserController {
 
     @GetMapping("/list")
     public ServerResponse<List<UserEntity>> queryAll() {
-        List<UserEntity> list = null;
+        List<UserEntity> list;
         try {
             list = userService.queryAll();
         } catch (Exception e) {
@@ -98,6 +127,18 @@ public class UserController {
             return ServerResponse.createByErrorMessage("query all user fail!");
         }
         return ServerResponse.createBySuccess(list);
+    }
+
+    @GetMapping("/export")
+    public ServerResponse<String> exportExcel(HttpServletResponse response) {
+        userService.exportUsers(response);
+        return ServerResponse.createBySuccessMessage("导出成功！");
+    }
+
+    @PostMapping("/import")
+    public ServerResponse<String> importExcel(@RequestParam("file") MultipartFile file) {
+        userService.importUsers(file);
+        return ServerResponse.createBySuccessMessage("导入成功！");
     }
 
 }
